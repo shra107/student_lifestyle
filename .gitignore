@@ -1,0 +1,14 @@
+# Jupyter
+*.ipynb
+.ipynb_checkpoints/
+
+# Dataset
+*.csv
+
+# Editor
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.env
