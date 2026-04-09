@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | AI Mental Wellness Insight System</title>
+    <style>
+        /* -----------------------------------------------------------
+           FONTS & VARIABLES
+        ----------------------------------------------------------- */
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-dark: #0f172a;
+            --bg-panel: rgba(30, 41, 59, 0.4);
+            --primary: #8b5cf6; /* Violet */
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --accent-teal: #14b8a6;
+            --accent-teal-glow: rgba(20, 184, 166, 0.4);
+            --accent-emerald: #10b981; /* Normal */
+            --accent-amber: #f59e0b;   /* Moderate */
+            --accent-rose: #f43f5e;    /* High Risk */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --shadow-neon: 0 0 20px rgba(139, 92, 246, 0.15);
+            --font-main: 'Outfit', sans-serif;
+            --transition-speed: 0.4s;
+        }
+
+        /* -----------------------------------------------------------
+           GLOBAL RESET & BASE STYLES
+        ----------------------------------------------------------- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* Ambient background mesh */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(20, 184, 166, 0.15), transparent 40%);
+        }
+
+        /* -----------------------------------------------------------
+           UTILITIES & ANIMATIONS
+        ----------------------------------------------------------- */
+        .hidden {
+            display: none !important;
+            opacity: 0;
+        }
+
+        .fade-in {
+            animation: fadeIn var(--transition-speed) forwards ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* -----------------------------------------------------------
+           LAYOUT STRUCTURE
+        ----------------------------------------------------------- */
+        header {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--glass-border);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px 40px;
+            position: relative;
+        }
+
+        /* -----------------------------------------------------------
+           SCREEN 1: LANDING
+        ----------------------------------------------------------- */
+        .hero-container {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* 3D Floating element decoration */
+        .orb-decoration {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary), transparent 70%);
+            opacity: 0.2;
+            filter: blur(40px);
+            z-index: -1;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        /* -----------------------------------------------------------
+           SCREEN 2: INPUT FORM
+        ----------------------------------------------------------- */
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        @media (max-width: 850px) {
+            .input-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-container {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-value-display {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* 3D Input Styling */
+        .modern-input, .modern-select {
+            background: rgba(0, 0, 0, 0.2);
+            border: var(--glass-border);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .modern-input:focus, .modern-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--text-main);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #334155;
+            border-radius: 2px;
+        }
+
+        /* 3D Toggle Group */
+        .toggle-group {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .toggle-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .toggle-option.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 10px var(--primary-glow);
+        }
+
+        /* Stress Slider Color Logic Classes */
+        .slider-track-green::-webkit-slider-runnable-track { background: #10b981; }
+        .slider-track-amber::-webkit-slider-runnable-track { background: #f59e0b; }
+        .slider-track-red::-webkit-slider-runnable-track { background: #f43f5e; }
+
+        /* Live Preview Card */
+        .preview-container {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .preview-card {
+            padding: 30px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .preview-header {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .preview-label { color: var(--text-muted); }
+        .preview-val { font-weight: 600; color: var(--accent-teal); }
+
+        /* -----------------------------------------------------------
+           SCREEN 3: PROCESSING
+        ----------------------------------------------------------- */
+        .processing-container {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .loader-ring {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .processing-text {
+            font-size: 1.2rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        /* -----------------------------------------------------------
+           SCREEN 4: RESULTS
+        ----------------------------------------------------------- */
+        .result-container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .result-status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Result Colors */
+        .res-normal .result-status-badge { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid var(--accent-emerald); }
+        .res-normal h2 { color: var(--accent-emerald); }
+        
+        .res-moderate .result-status-badge { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); }
+        .res-moderate h2 { color: var(--accent-amber); }
+        
+        .res-high .result-status-badge { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); border: 1px solid var(--accent-rose); }
+        .res-high h2 { color: var(--accent-rose); }
+
+        .result-orb-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-orb {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--dynamic-color, var(--accent-emerald)) var(--percent, 75%), rgba(255,255,255,0.1) 0);
+            mask: radial-gradient(transparent 60%, black 61%);
+            -webkit-mask: radial-gradient(transparent 60%, black 61%);
+            transform: rotate(-90deg);
+            transition: all 1s ease-out;
+            box-shadow: 0 0 30px var(--dynamic-glow, rgba(16, 185, 129, 0.2));
+        }
+        
+        .result-score-text {
+            position: absolute;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .disclaimer {
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* -----------------------------------------------------------
+           SCREEN 5: DASHBOARD
+        ----------------------------------------------------------- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .dash-card {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dash-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dash-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .dash-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .dash-bar-fill {
+            height: 100%;
+            background: var(--accent-teal);
+            width: 0%;
+            transition: width 1s ease-out;
+            border-radius: 3px;
+        }
+
+        /* -----------------------------------------------------------
+           FOOTER
+        ----------------------------------------------------------- */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: var(--glass-border);
+            margin-top: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="brand">
+            <div class="brand-icon"></div>
+            AURA
+        </div>
+        <nav>
+            <!-- Optional Nav Items could go here -->
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-container">
+
+        <!-- SCREEN 1: LANDING -->
+        <section id="screen-landing" class="hero-container fade-in">
+            <div class="orb-decoration" style="top: -50px; left: -100px;"></div>
+            <h1 class="hero-title">AI-Powered Student<br>Mental Wellness Insight System</h1>
+            <p class="hero-subtitle">
+                Understand academic pressure, lifestyle balance, and emotional well-being<br>
+                through intelligent data-driven analysis.
+            </p>
+            <button class="btn-primary" onclick="app.goToScreen('screen-input')">Start Personal Analysis</button>
+        </section>
+
+        <!-- SCREEN 2: INPUT -->
+        <section id="screen-input" class="input-grid hidden">
+            <!-- Left: Form -->
+            <div class="glass-panel form-container">
+                <h2 style="margin-bottom: 10px;">Student Metrics</h2>
+                <p style="color:var(--text-muted); margin-bottom:20px; font-size: 0.9rem;">Enter your current data for accurate AI processing.</p>
+
+                <!-- Age -->
+                <div class="input-group">
+                    <label class="input-label">Age <span id="val-age" class="input-value-display">20</span></label>
+                    <input type="range" id="in-age" min="16" max="30" value="20" oninput="app.updateInput('age', this.value)">
+                </div>
+
+                <!-- Gender -->
+                <div class="input-group">
+                    <label class="input-label">Gender Identity</label>
+                    <div class="toggle-group">
+                        <div class="toggle-option active" onclick="app.setGender('Male', this)">Male</div>
+                        <div class="toggle-option" onclick="app.setGender('Female', this)">Female</div>
+                        <div class="toggle-option" onclick="app.setGender('Non-Binary', this)">Other</div>
+                    </div>
+                </div>
+
+                <!-- Department -->
+                <div class="input-group">
+                    <label class="input-label">Department</label>
+                    <select id="in-dept" class="modern-select" onchange="app.updateInput('dept', this.value)">
+                        <option value="Engineering">Engineering</option>
+                        <option value="Medical">Medical</option>
+                        <option value="Science">Science</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Business">Business</option>
+                    </select>
+                </div>
+
+                <!-- CGPA -->
+                <div class="input-group">
+                    <label class="input-label">SGPA / CGPA (1-10 Scale) <span id="val-cgpa" class="input-value-display">7.5</span></label>
+                    <!-- Modified: min, max, and value updated for 1-10 scale -->
+                    <input type="range" id="in-cgpa" min="1" max="10" step="0.1" value="7.5" oninput="app.updateInput('cgpa', this.value)">
+                </div>
+
+                <!-- Sleep -->
+                <div class="input-group">
+                    <label class="input-label">Sleep Duration (Hours) <span id="val-sleep" class="input-value-display">6</span></label>
+                    <input type="range" id="in-sleep" min="0" max="12" step="0.5" value="6" oninput="app.updateInput('sleep', this.value)">
+                </div>
+
+                <!-- Study Hours -->
+                <div class="input-group">
+                    <label class="input-label">Study Hours (Daily) <span id="val-study" class="input-value-display">4</span></label>
+                    <input type="range" id="in-study" min="0" max="16" step="1" value="4" oninput="app.updateInput('study', this.value)">
+                </div>
+
+                <!-- Social Media -->
+                <div class="input-group">
+                    <label class="input-label">Social Media Usage (Hours) <span id="val-social" class="input-value-display">3</span></label>
+                    <input type="range" id="in-social" min="0" max="15" step="0.5" value="3" oninput="app.updateInput('social', this.value)">
+                </div>
+
+                 <!-- Physical Activity -->
+                 <div class="input-group">
+                    <label class="input-label">Physical Activity (Hours) <span id="val-activity" class="input-value-display">1</span></label>
+                    <input type="range" id="in-activity" min="0" max="6" step="0.5" value="1" oninput="app.updateInput('activity', this.value)">
+                </div>
+
+                <!-- Stress Level -->
+                <div class="input-group">
+                    <label class="input-label">Self-Reported Stress Level (1-10) <span id="val-stress" class="input-value-display">5</span></label>
+                    <input type="range" id="in-stress" class="slider-track-amber" min="1" max="10" step="1" value="5" oninput="app.updateInput('stress', this.value)">
+                </div>
+
+                <button class="btn-primary" style="margin-top: 10px;" onclick="app.runAnalysis()">Run AI Analysis</button>
+            </div>
+
+            <!-- Right: Live Preview -->
+            <div class="preview-container">
+                <div class="glass-panel preview-card">
+                    <div class="preview-header">Live Data Preview</div>
+                    
+                    <div class="preview-item">
+                        <span class="preview-label">Department</span>
+                        <span class="preview-val" id="prev-dept">Engineering</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Academic Load</span>
+                        <span class="preview-val" id="prev-academic">Moderate</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Sleep Balance</span>
+                        <span class="preview-val" id="prev-sleep">6h</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Activity Level</span>
+                        <span class="preview-val" id="prev-activity">1h</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Stress Index</span>
+                        <span class="preview-val" id="prev-stress">5/10</span>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <div class="preview-label" style="margin-bottom: 5px;">AI Readiness</div>
+                        <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                            <div style="width: 100%; height: 100%; background: var(--accent-teal); border-radius: 2px; box-shadow: 0 0 10px var(--accent-teal);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: PROCESSING -->
+        <section id="screen-processing" class="glass-panel processing-container hidden">
+            <div class="loader-ring"></div>
+            <h2 class="processing-text">Analyzing Biometrics & Patterns...</h2>
+            <p style="color: var(--text-muted); margin-top: 10px;">Comparing against anonymized student data sets.</p>
+        </section>
+
+        <!-- SCREEN 4: RESULTS -->
+        <section id="screen-result" class="glass-panel result-container hidden">
+            <div id="result-content" class="">
+                <div class="result-status-badge" id="res-badge">Analysis Complete</div>
+                
+                <div class="result-orb-container">
+                    <div class="result-orb" id="res-orb"></div>
+                    <div class="result-score-text" id="res-score">85%</div>
+                </div>
+
+                <h2 id="res-title">Optimal Wellness</h2>
+                <p id="res-message" style="margin: 15px 0; color: var(--text-muted); line-height: 1.5;">
+                    Your current lifestyle patterns suggest a healthy balance between academic responsibilities and personal care.
+                </p>
+
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
+                    <button class="btn-primary" onclick="app.goToScreen('screen-dashboard')">View Dashboard</button>
+                    <button class="modern-input" style="cursor: pointer; width: auto; padding: 0 20px;" onclick="app.reset()">New Analysis</button>
+                </div>
+
+                <p class="disclaimer">This insight is designed for awareness and support, not medical diagnosis.</p>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: DASHBOARD -->
+        <section id="screen-dashboard" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div style="margin-bottom: 30px; text-align: center;">
+                <h2>Personal Wellness Dashboard</h2>
+                <p style="color: var(--text-muted);">Detailed breakdown of your metrics.</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Card 1 -->
+                <div class="glass-panel dash-card">
+                    <div class="dash-title">Academic Performance</div>
+                    <div class="dash-value" id="dash-cgpa">7.5</div>
+                    <div class="dash-bar-container">
+                        <div class="dash-bar-fill" id="bar-cgpa" style="width: 0%; background: var(--primary);"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">SGPA / CGPA Metric (1-10)</div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-panel dash-card">
+                    <div class="dash-title">Rest Quality</div>
+                    <div class="dash-value" id="dash-sleep">6h</div>
+                    <div class="dash-bar-container">
+                        <div class="dash-bar-fill" id="bar-sleep" style="width: 0%; background: var(--accent-teal);"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Daily Sleep</div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-panel dash-card">
+                    <div class="dash-title">Physical Resilience</div>
+                    <div class="dash-value" id="dash-activity">1h</div>
+                    <div class="dash-bar-container">
+                        <div class="dash-bar-fill" id="bar-activity" style="width: 0%; background: var(--accent-emerald);"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Activity / Exercise</div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass-panel dash-card">
+                    <div class="dash-title">Stress Load</div>
+                    <div class="dash-value" id="dash-stress">5</div>
+                    <div class="dash-bar-container">
+                        <div class="dash-bar-fill" id="bar-stress" style="width: 0%; background: var(--accent-rose);"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Self-Assessment</div>
+                </div>
+            </div>
+
+            <button class="btn-primary" style="margin-top: 40px;" onclick="app.reset()">Start New Analysis</button>
+        </section>
+
+    </main>
+
+    <footer>
+        Designed for intelligent wellness awareness.
+    </footer>
+
+    <script>
+        const app = {
+            data: {
+                age: 20,
+                gender: 'Male',
+                dept: 'Engineering',
+                cgpa: 7.5, // Modified Initial Value for 10-point scale
+                sleep: 6,
+                study: 4,
+                social: 3,
+                activity: 1,
+                stress: 5
+            },
+
+            // Navigation
+            goToScreen: (screenId) => {
+                // Hide all screens
+                document.querySelectorAll('main > section').forEach(sec => {
+                    sec.classList.add('hidden');
+                    sec.classList.remove('fade-in');
+                });
+                
+                // Show target screen
+                const target = document.getElementById(screenId);
+                target.classList.remove('hidden');
+                target.classList.add('fade-in');
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            // Input Handling
+            updateInput: (key, value) => {
+                app.data[key] = parseFloat(value) || value; // Convert numbers
+                
+                // Update Display Value in Form
+                const displayEl = document.getElementById(`val-${key}`);
+                if (displayEl) displayEl.innerText = value;
+
+                // Special handling for Stress Slider Colors
+                if (key === 'stress') {
+                    const slider = document.getElementById('in-stress');
+                    slider.classList.remove('slider-track-green', 'slider-track-amber', 'slider-track-red');
+                    if (value <= 3) slider.classList.add('slider-track-green');
+                    else if (value <= 7) slider.classList.add('slider-track-amber');
+                    else slider.classList.add('slider-track-red');
+                }
+
+                // Update Live Preview
+                app.updatePreview();
+            },
+
+            setGender: (gender, element) => {
+                app.data.gender = gender;
+                // Toggle Visuals
+                document.querySelectorAll('.toggle-option').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+                app.updatePreview();
+            },
+
+            updatePreview: () => {
+                document.getElementById('prev-dept').innerText = app.data.dept;
+                document.getElementById('prev-sleep').innerText = app.data.sleep + 'h';
+                document.getElementById('prev-activity').innerText = app.data.activity + 'h';
+                document.getElementById('prev-stress').innerText = app.data.stress + '/10';
+                
+                // Simple logic for academic load text
+                let load = 'Low';
+                if (app.data.study > 5) load = 'Moderate';
+                if (app.data.study > 10) load = 'High';
+                document.getElementById('prev-academic').innerText = load;
+            },
+
+            // Analysis Logic (Mock AI)
+            runAnalysis: () => {
+                app.goToScreen('screen-processing');
+                
+                // Simulate AI Thinking delay
+                setTimeout(() => {
+                    const result = app.calculateResult();
+                    app.displayResult(result);
+                }, 2500);
+            },
+
+            calculateResult: () => {
+                const { sleep, study, social, activity, stress, cgpa } = app.data;
+                
+                let score = 100; // Start with perfect health
+
+                // Deductions (heuristic algorithm)
+                // Sleep less than 6 is bad
+                if (sleep < 6) score -= (6 - sleep) * 5;
+                if (sleep < 4) score -= 10;
+
+                // Study more than 8 is stressful
+                if (study > 8) score -= (study - 8) * 3;
+                
+                // Social media over 4 can be bad (isolation/distraction proxy)
+                if (social > 4) score -= (social - 4) * 2;
+
+                // Activity adds points
+                if (activity > 0) score += activity * 2;
+
+                // Stress is heavy multiplier
+                score -= (stress * 4);
+
+                // Academic pressure (High CGPA + High Study + Low Sleep = Burnout Risk)
+                // Modified logic for 10-point scale: > 8.5 is considered high pressure
+                if (cgpa > 8.5 && study > 8 && sleep < 5) {
+                    score -= 15; // Burnout penalty
+                }
+
+                // Clamp score 0-100
+                score = Math.max(0, Math.min(100, Math.round(score)));
+
+                // Determine Category
+                let category = 'normal';
+                if (score < 70) category = 'moderate';
+                if (score < 40) category = 'high';
+
+                return { score, category };
+            },
+
+            displayResult: (result) => {
+                const { score, category } = result;
+                const container = document.getElementById('screen-result');
+                const orb = document.getElementById('res-orb');
+                const scoreText = document.getElementById('res-score');
+                const badge = document.getElementById('res-badge');
+                const title = document.getElementById('res-title');
+                const message = document.getElementById('res-message');
+
+                // Reset classes
+                container.classList.remove('res-normal', 'res-moderate', 'res-high');
+                
+                // Set colors and text based on category
+                let color, glow, titleStr, msgStr;
+
+                if (category === 'normal') {
+                    container.classList.add('res-normal');
+                    color = 'var(--accent-emerald)';
+                    glow = 'rgba(16, 185, 129, 0.4)';
+                    titleStr = "Optimal Wellness State";
+                    msgStr = "Your current lifestyle patterns suggest a healthy balance between academic responsibilities and personal care. Keep maintaining your current routine.";
+                } else if (category === 'moderate') {
+                    container.classList.add('res-moderate');
+                    color = 'var(--accent-amber)';
+                    glow = 'rgba(245, 158, 11, 0.4)';
+                    titleStr = "Moderate Stress Detected";
+                    msgStr = "You are managing, but signs of academic pressure are showing. Consider optimizing your sleep schedule or taking short breaks during study sessions.";
+                } else {
+                    container.classList.add('res-high');
+                    color = 'var(--accent-rose)';
+                    glow = 'rgba(244, 63, 94, 0.4)';
+                    titleStr = "High Burnout Risk";
+                    msgStr = "Your metrics indicate significant pressure. We strongly recommend speaking with a counselor, prioritizing sleep, and reducing academic workload temporarily.";
+                }
+
+                // Apply Styles
+                orb.style.setProperty('--dynamic-color', color);
+                orb.style.setProperty('--dynamic-glow', glow);
+                orb.style.setProperty('--percent', `${score}%`);
+                
+                badge.innerText = category === 'normal' ? 'Stable' : category === 'moderate' ? 'Warning' : 'Critical';
+                title.innerText = titleStr;
+                message.innerText = msgStr;
+
+                // Animate Score
+                let currentScore = 0;
+                const interval = setInterval(() => {
+                    if (currentScore >= score) {
+                        clearInterval(interval);
+                        scoreText.innerText = score + '%';
+                    } else {
+                        currentScore++;
+                        scoreText.innerText = currentScore + '%';
+                    }
+                }, 20);
+
+                // Go to screen
+                app.goToScreen('screen-result');
+            },
+
+            // Dashboard Population
+            populateDashboard: () => {
+                // Values
+                document.getElementById('dash-cgpa').innerText = app.data.cgpa;
+                document.getElementById('dash-sleep').innerText = app.data.sleep + 'h';
+                document.getElementById('dash-activity').innerText = app.data.activity + 'h';
+                document.getElementById('dash-stress').innerText = app.data.stress + '/10';
+
+                // Bars (Width Calculation)
+                // CGPA: Modified to divide by 10 for 1-10 scale
+                const cgpaPct = (app.data.cgpa / 10) * 100;
+                // Sleep: 0 to 12 scale
+                const sleepPct = (app.data.sleep / 12) * 100;
+                // Activity: 0 to 6 scale
+                const actPct = (app.data.activity / 6) * 100;
+                // Stress: 0 to 10 scale
+                const stressPct = (app.data.stress / 10) * 100;
+
+                // Animate Bars
+                setTimeout(() => {
+                    document.getElementById('bar-cgpa').style.width = `${cgpaPct}%`;
+                    document.getElementById('bar-sleep').style.width = `${sleepPct}%`;
+                    document.getElementById('bar-activity').style.width = `${actPct}%`;
+                    document.getElementById('bar-stress').style.width = `${stressPct}%`;
+                }, 100);
+            }
+        };
+
+        // Override GoToScreen for Dashboard to trigger population
+        const originalGoToScreen = app.goToScreen;
+        app.goToScreen = (id) => {
+            if (id === 'screen-dashboard') {
+                app.populateDashboard();
+            }
+            originalGoToScreen(id);
+        };
+
+        app.reset = () => {
+            app.goToScreen('screen-landing');
+        };
+
+    </script>
+</body>
+</html>
